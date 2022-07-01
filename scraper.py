@@ -4,10 +4,10 @@ from bs4 import BeautifulSoup
 import time
 import pandas as pd
 
-# NASA Exoplanet URL
+# Enlace a NASA Exoplanet
 START_URL = "https://exoplanets.nasa.gov/exoplanet-catalog/"
 
-# Webdriver
+# Controlador web
 browser = webdriver.Chrome("D:/Setup/chromedriver_win32/chromedriver.exe")
 browser.get(START_URL)
 
@@ -15,16 +15,16 @@ time.sleep(10)
 
 planets_data = []
 
-# Define Exoplanet Data Scrapping Method
+# Definir el método de extracción de datos para Exoplanet
 def scrape():
 
     for i in range(0,10):
-        print(f'Scrapping page {i+1} ...' )
+        print(f'Extrayendo página {i+1} ...' )
         
-        # BeautifulSoup Object     
+        # Objeto BeautifulSoup
         soup = BeautifulSoup(browser.page_source, "html.parser")
 
-        # Loop to find element using XPATH
+        # Bucle para encontrar los elementos usando XPATH
         for ul_tag in soup.find_all("ul", attrs={"class", "exoplanet"}):
 
             li_tags = ul_tag.find_all("li")
@@ -43,17 +43,17 @@ def scrape():
 
             planets_data.append(temp_list)
 
-        # Find all elements on the page and click to move to the next page
+        # Encontrar todos los elementos en la página y hacer clic para desplazarse a la siguiente
         browser.find_element(by=By.XPATH, value='//*[@id="primary_column"]/footer/div/div/div/nav/span[2]/a').click()
 
-# Calling Method    
+# Llamada del método
 scrape()
 
-# Define Header
+# Definir los encabezados
 headers = ["name", "light_years_from_earth", "planet_mass", "stellar_magnitude", "discovery_date"]
 
-# Define pandas DataFrame   
+# Definir el dataframe de Pandas
 planet_df_1 = pd.DataFrame(planets_data, columns=headers)
 
-# Convert to CSV
+# Convertir a CSV
 planet_df_1.to_csv('scraped_data.csv',index=True, index_label="id")
